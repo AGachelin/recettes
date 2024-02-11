@@ -15,7 +15,6 @@ from PyQt5.QtWidgets import (
     QHBoxLayout,
     QSizePolicy,
     QInputDialog,
-    QLabel,
     QTableWidgetItem,
     QMessageBox,
     QFileDialog,
@@ -228,18 +227,25 @@ class MainWindow(QMainWindow):
 
     def modif_unit(self):
         def save(self):
-            query=QSqlQuery()
+            query = QSqlQuery()
             if box1.isChecked():
-                query.exec(f"""update unite set {text}={coeff.value()} where nom='masse'""")
+                query.exec(
+                    f"""update unite set {text}={coeff.value()} where nom='masse'"""
+                )
                 query.exec(f"""update unite set {text}=0 where nom='volume'""")
             else:
                 query.exec(f"""update unite set {text}=0 where nom='masse'""")
-                query.exec(f"""update unite set {text}={coeff.value()} where nom='volume'""")
+                query.exec(
+                    f"""update unite set {text}={coeff.value()} where nom='volume'"""
+                )
             for i in self.ingredients:
-                query.exec(f"""update ing_bis set \"{i}\"='{nom.text()}' where \"{i}\"='{text}'""")
+                query.exec(
+                    f"""update ing_bis set \"{i}\"='{nom.text()}' where \"{i}\"='{text}'"""
+                )
             query.exec(f"""alter table unite rename column {text} to {nom.text()}""")
             self.cont.close()
             self.close(ok=True)
+
         text, ok = QInputDialog.getItem(
             self,
             "Modification d'une unité",
@@ -272,16 +278,22 @@ class MainWindow(QMainWindow):
                 coeff = QDoubleSpinBox(value=self.tabConv["Volume"][text], suffix=" mL")
                 box2.setChecked(True)
             coeff.setPrefix(f"1 {text} = ")
-            lay.addWidget(coeff,1,n)
-            l=['mL','','g']
+            lay.addWidget(coeff, 1, n)
+            l = ["mL", "", "g"]
             nom.textChanged.connect(lambda: coeff.setPrefix(f"1 {nom.text()} = "))
             box1.stateChanged.connect(
-                lambda: [box2.setCheckState((box1.checkState() + 2) % 4), coeff.setSuffix(f" {l[box1.checkState()]}")]
+                lambda: [
+                    box2.setCheckState((box1.checkState() + 2) % 4),
+                    coeff.setSuffix(f" {l[box1.checkState()]}"),
+                ]
             )
             box2.stateChanged.connect(
-                lambda: [box1.setCheckState((box2.checkState() + 2) % 4), coeff.setSuffix(f" {l[box1.checkState()]}")]
+                lambda: [
+                    box1.setCheckState((box2.checkState() + 2) % 4),
+                    coeff.setSuffix(f" {l[box1.checkState()]}"),
+                ]
             )
-            n = n+1
+            n = n + 1
             self.btn1 = QPushButton("Enregistrer")
             self.btn2 = QPushButton("Annuler")
             self.btn1.clicked.connect(lambda: save(self))

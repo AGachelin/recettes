@@ -9,9 +9,19 @@ from PyQt5.QtWidgets import (
     QGridLayout,
     QAction,
     QMainWindow,
+    QPushButton,
+    QLineEdit,
+    QSizePolicy,
+    QInputDialog,
+    QTableWidgetItem,
+    QMessageBox,
+    QFileDialog,
 )
 import os
 from img_viewer import Slides
+
+from PyQt5 import QtCore
+from listes import liste_bouttons, liste_ingredients, TableWidget
 
 # from fenetre_edition import fenetre_edition
 
@@ -22,8 +32,8 @@ from img_viewer import Slides
 class fenetre_affichage(QMainWindow):
     def __init__(self, id, widget_names, all_tags, unites, par):
         self.liste = {}
-        self.id=id
-        self.tabConv={i:par.tabConv[i].copy() for i in par.tabConv}
+        self.id = id
+        self.tabConv = {i: par.tabConv[i].copy() for i in par.tabConv}
         self.widget_names = widget_names
         self.all_tags = all_tags
         self.unites = unites
@@ -53,7 +63,7 @@ class fenetre_affichage(QMainWindow):
                 i += 1
             n = len(liste_img)
         self.liste["images"] = liste_img.copy()
-        if len(liste_img)>0:
+        if len(liste_img) > 0:
             self.slide = Slides(liste_img)
         else:
             self.slide = Slides(["..\\data\\default.png"])
@@ -65,7 +75,9 @@ class fenetre_affichage(QMainWindow):
         query.exec(f"""select * from recettes where id={id}""")
         query2.exec("""select name from pragma_table_info('recettes')""")
         query3.exec(f"""select * from ing_bis where id={id}""")
-        query4.exec("""select name,rho from pragma_table_info('ing_bis') join ingredients on name=nom""")
+        query4.exec(
+            """select name,rho from pragma_table_info('ing_bis') join ingredients on name=nom"""
+        )
         query.first()
         query2.first()
         query3.first()
@@ -144,42 +156,46 @@ class fenetre_affichage(QMainWindow):
                     self.l_tags.append(query2.value(0))
                 query2.next()
                 n = n + 1
-            if query.value(n)!=0:
-                if query3.value(i) != "" and query3.value(i) in unites['Masse']:
+            if query.value(n) != 0:
+                if query3.value(i) != "" and query3.value(i) in unites["Masse"]:
                     self.liste_ing[query4.value(0)] = [
                         "Masse",
                         query3.value(i),
-                        query.value(n)/self.tabConv['Masse'][query3.value(i)],
+                        query.value(n) / self.tabConv["Masse"][query3.value(i)],
                         -1,
                         -1,
                     ]
                     label.setText(
                         query4.value(0)
                         + " : "
-                        + str(query.value(n)/self.tabConv['Masse'][query3.value(i)])
+                        + str(query.value(n) / self.tabConv["Masse"][query3.value(i)])
                         + " "
                         + query3.value(i)
                     )
-                elif query3.value(i) != "" and query3.value(i) in unites['Volume']:
-                    if query4.value(1)==0:
-                        rho=1
+                elif query3.value(i) != "" and query3.value(i) in unites["Volume"]:
+                    if query4.value(1) == 0:
+                        rho = 1
                     else:
-                        rho=query4.value(1)
+                        rho = query4.value(1)
                     self.liste_ing[query4.value(0)] = [
-                    "Volume",
-                    query3.value(i),
-                    query.value(n)/(rho*self.tabConv['Volume'][query3.value(i)]),
-                    -1,
-                    -1,
+                        "Volume",
+                        query3.value(i),
+                        query.value(n)
+                        / (rho * self.tabConv["Volume"][query3.value(i)]),
+                        -1,
+                        -1,
                     ]
                     label.setText(
                         query4.value(0)
                         + " : "
-                        + str(query.value(n)/(rho*self.tabConv['Volume'][query3.value(i)]))
+                        + str(
+                            query.value(n)
+                            / (rho * self.tabConv["Volume"][query3.value(i)])
+                        )
                         + " "
                         + query3.value(i)
                     )
-                elif query3.value(i)!="":
+                elif query3.value(i) != "":
                     self.liste_ing[query4.value(0)] = [
                         "Arbitraire",
                         query3.value(i),
@@ -239,49 +255,33 @@ class fenetre_affichage(QMainWindow):
             self.widget_names, self.all_tags, self.unites, self.liste, win
         )
         w.show()
-    
+
     def suppression(self):
-        ok=QMessageBox.question(self,"Suppression de recette","La suppression d'une recette est définitive. Poursuivre ?")
+        ok = QMessageBox.question(
+            self,
+            "Suppression de recette",
+            "La suppression d'une recette est définitive. Poursuivre ?",
+        )
         if ok:
-            query=QSqlQuery()
+            query = QSqlQuery()
             query.exec(f"""delete from recettes where id={self.id}""")
             query.exec(f"""delete from ing_bis where id={self.id}""")
             query.exec(f"""update recettes set id=id-1 where id>{self.id}""")
             query.exec(f"""update ing_bis set id=id-1 where id>{self.id}""")
-            n=self.id
+            n = self.id
             os.system(f"rd /s /q ..\\data\\{n}")
-            n=n+1
-            while os.system(f"rename ..\\data\\{n} {n-1}")==0:
+            n = n + 1
+            while os.system(f"rename ..\\data\\{n} {n-1}") == 0:
                 os.system(f"rename ..\\data\\{n-1}\\{n}.txt {n-1}.txt")
-                n=n+1
+                n = n + 1
             self.close()
-
-
-from PyQt5 import QtCore
-from PyQt5.QtWidgets import (
-    QWidget,
-    QLabel,
-    QPushButton,
-    QGridLayout,
-    QPlainTextEdit,
-    QLineEdit,
-    QHBoxLayout,
-    QSizePolicy,
-    QInputDialog,
-    QTableWidgetItem,
-    QMessageBox,
-    QFileDialog,
-)
-from listes import liste_bouttons, liste_ingredients, TableWidget
-from PyQt5.QtSql import QSqlQuery
-import os
 
 
 class fenetre_edition(QWidget):
     def __init__(self, widget_names, all_tags, unites, liste, win):
         super().__init__()
         self.liste = liste
-        self.widget_names=widget_names
+        self.widget_names = widget_names
         self.val_duree = liste["val"][3]
         self.val_duree1 = liste["val"][4]
         self.val_duree2 = liste["val"][5]
@@ -549,7 +549,7 @@ class fenetre_edition(QWidget):
                 query.exec(
                     f"""update ingredients set {l[0].lower()}=True, rho={l[3]} where nom='{i}'"""
                 )
-                if l[0]=='Masse':
+                if l[0] == "Masse":
                     query.exec(f"""update recettes set {i}=recettes.{i}/{l[3]}""")
             query.exec(
                 f"""update ingredients set {l[0].lower()}=True where nom='{i}'"""
@@ -566,16 +566,28 @@ class fenetre_edition(QWidget):
                 insertion_query = insertion_query + "=" + str(-1 * l[2])
             else:
                 try:
-                    a=self.widget_names[i]['rho']
+                    a = self.widget_names[i]["rho"]
                 except:
-                    a=0
-                if max(l[3],a)>0 and l[1] in self.unites['Volume']:
-                    insertion_query = insertion_query + "=" + str(l[2]*win.tabConv[l[0]][l[1]]*max(l[3],a))
+                    a = 0
+                if max(l[3], a) > 0 and l[1] in self.unites["Volume"]:
+                    insertion_query = (
+                        insertion_query
+                        + "="
+                        + str(l[2] * win.tabConv[l[0]][l[1]] * max(l[3], a))
+                    )
                 else:
-                    if l[1] in self.unites['Volume']:
-                        insertion_query = insertion_query + "=" + str(l[2]*win.tabConv['Volume'][l[1]])
+                    if l[1] in self.unites["Volume"]:
+                        insertion_query = (
+                            insertion_query
+                            + "="
+                            + str(l[2] * win.tabConv["Volume"][l[1]])
+                        )
                     else:
-                        insertion_query = insertion_query + "=" + str(l[2]*win.tabConv['Masse'][l[1]])
+                        insertion_query = (
+                            insertion_query
+                            + "="
+                            + str(l[2] * win.tabConv["Masse"][l[1]])
+                        )
         for i in self.all_tags:
             query.exec(f"""update recettes set {i}='' where id={id}""")
         for i in epices:
@@ -607,6 +619,8 @@ class fenetre_edition(QWidget):
                 )
                 os.system(path)
         win.w.close()
-        win.w = fenetre_affichage(id, self.widget_names, self.all_tags, self.unites, win)
+        win.w = fenetre_affichage(
+            id, self.widget_names, self.all_tags, self.unites, win
+        )
         win.w.show()
         self.close()

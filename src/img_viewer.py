@@ -1,7 +1,4 @@
 from PyQt5 import QtCore, QtWidgets, QtGui
-import sys
-
-from PyQt5.QtGui import QResizeEvent
 
 
 class Slides(QtWidgets.QWidget):
@@ -49,6 +46,6 @@ class Slides(QtWidgets.QWidget):
             self.image = self.image_files[self.step].scaledToHeight(
                 int(0.8 * self.height())
             )
-        if self.lis>1:
+        if self.lis > 1:
             self.cont.setFixedWidth(self.label.width())
         self.label.setPixmap(self.image)

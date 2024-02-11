@@ -10,18 +10,18 @@ class main_search(QWidget):
     def __init__(self, search_menus, con, widget_names, all_tags, unites, tabConv):
         self.widget_names = widget_names
         self.all_tags = all_tags
-        self.tabConv=tabConv
+        self.tabConv = tabConv
         self.unites = unites
         super(main_search, self).__init__()
         self.search_menus = search_menus
         self.searchBar = QLineEdit()
         self.searchBar.setPlaceholderText("Rechercher une recette...")
-        query=QSqlQuery()
+        query = QSqlQuery()
         query.exec("""select nom from recettes""")
-        lr=[]
+        lr = []
         while query.next():
             lr.append(query.value(0))
-        self.completer=QCompleter(lr)
+        self.completer = QCompleter(lr)
         self.completer.setCaseSensitivity(Qt.CaseInsensitive)
         self.searchBar.setCompleter(self.completer)
         self.search_button = QToolButton()
@@ -67,21 +67,29 @@ class main_search(QWidget):
         request = "SELECT id,nom from recettes where "
         for i in range(0, len(chechstates)):
             if type(chechstates[i]) is not bool:
-                if chechstates[i][0]>0:
-                    request = request + "(" + f"\"{names[i]}\" between {chechstates[i][0]} and {chechstates[i][1]} or \"{names[i]}\"<0) and "
-                elif chechstates[i][0]<0:
-                    request = request + "(" + f"\"{names[i]}\" between {chechstates[i][1]} and {chechstates[i][0]} or \"{names[i]}\">0) and "
+                if chechstates[i][0] > 0:
+                    request = (
+                        request
+                        + "("
+                        + f'"{names[i]}" between {chechstates[i][0]} and {chechstates[i][1]} or "{names[i]}"<0) and '
+                    )
+                elif chechstates[i][0] < 0:
+                    request = (
+                        request
+                        + "("
+                        + f'"{names[i]}" between {chechstates[i][1]} and {chechstates[i][0]} or "{names[i]}">0) and '
+                    )
                 else:
-                    request = request + f"\"{names[i]}\"<> 0.0 and "
-            elif not(chechstates[i]):
-                request = request + f"\"{names[i]}\"" + "=0 and "
-        checkstates_bis=[i.checked() for i in self.search_menus[1].getWidgets()]
+                    request = request + f'"{names[i]}"<> 0.0 and '
+            elif not (chechstates[i]):
+                request = request + f'"{names[i]}"' + "=0 and "
+        checkstates_bis = [i.checked() for i in self.search_menus[1].getWidgets()]
         names = self.search_menus[1].getWidgetNames()
         for i in range(0, len(checkstates_bis)):
-            if checkstates_bis[i]==2:
-                request=request+f"\"{names[i]}\" <> 0 and "
-            elif checkstates_bis[i]==0:
-                request=request+f"\"{names[i]}\" = 0 and "
+            if checkstates_bis[i] == 2:
+                request = request + f'"{names[i]}" <> 0 and '
+            elif checkstates_bis[i] == 0:
+                request = request + f'"{names[i]}" = 0 and '
         request = request[:-5]
         if len(request) < len("SELECT id,nom from recettes where "):
             request = f"SELECT id,nom from recettes where nom like {t}"

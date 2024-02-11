@@ -1,11 +1,11 @@
-from PyQt5.QtWidgets import *
+from PyQt5.QtWidgets import QVBoxLayout, QScrollArea, QLineEdit, QCompleter
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget
 from onoffwidget import OnOffWidget
 
 
 class search_menu(QWidget):
-    def __init__(self, widget_names, amount_Range,tabConv):
+    def __init__(self, widget_names, amount_Range, tabConv):
         super(search_menu, self).__init__()
         self.global_lay = QVBoxLayout()
         self.widget_names = widget_names
@@ -44,12 +44,13 @@ class search_menu(QWidget):
 
     def getWidgetNames(self):
         return self.widget_names
-    
+
     def getAmountRanges(self):
         return self.amount_Range
-    
+
     def getWidgets(self):
         return self.widgets
+
 
 class search_menu_bis(QWidget):
     def __init__(self, widget_names):
@@ -87,6 +88,6 @@ class search_menu_bis(QWidget):
 
     def getWidgetNames(self):
         return self.widget_names
-        
+
     def getWidgets(self):
         return self.widgets
