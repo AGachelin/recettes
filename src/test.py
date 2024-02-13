@@ -630,8 +630,7 @@ class fenetre_d_ajout(QWidget):
                 )
                 os.system(path)
 
-            os.system("python test.py")
-            par.close()
+            par.close(ok=True)
             self.close()
         except:
             QMessageBox.warning(
