@@ -313,6 +313,7 @@ class MainWindow(QMainWindow):
 class fenetre_d_ajout(QWidget):
     def __init__(self, widget_names, all_tags, unites, tabConv, par):
         super().__init__()
+        self.ok=True
         self.widget_names = widget_names
         self.tabConv = tabConv
         self.label = QLabel("Another Window")
@@ -320,6 +321,7 @@ class fenetre_d_ajout(QWidget):
         self.unites = unites
         self.setGeometry(600, 100, 800, 600)
         self.recette = QPlainTextEdit()
+        self.recette.textChanged.connect(self.i)
         self.recette.setPlaceholderText("Etapes de la recette")
         self.ingredients = liste_ingredients(widget_names, self.unites)
         self.epices = liste_bouttons(self.all_tags, "épices")
@@ -348,8 +350,10 @@ class fenetre_d_ajout(QWidget):
         self.btn7.setText("Durée de repos ?")
         self.btn7.clicked.connect(self.duree2)
         self.nom_recette = QLineEdit()
+        self.nom_recette.textChanged.connect(self.i)
         self.nom_recette.setPlaceholderText("Nom de la recette")
         self.source = QLineEdit()
+        self.source.textChanged.connect(self.i)
         self.source.setPlaceholderText("Source")
         self.btn1.setText("Annuler")
         self.btn1.pressed.connect(self.f)
@@ -389,6 +393,9 @@ class fenetre_d_ajout(QWidget):
         self.lay.addWidget(self.btn8, 1, 3, 4, 1)
         self.setLayout(self.lay)
 
+    def i(self):
+        self.ok=False
+
     def eventFilter(self, source, event):
         if event.type() == QtCore.QEvent.Drop and event.mimeData().hasUrls():
             for url in event.mimeData().urls():
@@ -397,6 +404,7 @@ class fenetre_d_ajout(QWidget):
         return super().eventFilter(source, event)
 
     def addFile(self, filepath):
+        self.i()
         l = filepath.split("\\")
         l1 = l[-1].split(".")
         if len(l1) > 2 or l1[-1] not in ["jpg", "png", "jpeg"]:
@@ -451,9 +459,10 @@ class fenetre_d_ajout(QWidget):
         self.close()
 
     def duree(self):
+        self.i()
         self.val_duree = (
-            QInputDialog.getInt(self, "Durée de préparation", "Nombre d'heures :")[0],
-            QInputDialog.getInt(self, "Durée de préparation", "Nombre de minutes :")[0],
+            QInputDialog.getInt(self, "Durée de préparation", "Nombre d'heures :",min=0)[0],
+            QInputDialog.getInt(self, "Durée de préparation", "Nombre de minutes :",min=0)[0],
         )
         self.btn2.setText(
             "Préparation : "
@@ -465,9 +474,10 @@ class fenetre_d_ajout(QWidget):
         self.val_duree = self.val_duree[0] + self.val_duree[1] / 60
 
     def duree1(self):
+        self.i()
         self.val_duree1 = (
-            QInputDialog.getInt(self, "Durée de la cuisson", "Nombre d'heures :")[0],
-            QInputDialog.getInt(self, "Durée de la cuisson", "Nombre de minutes :")[0],
+            QInputDialog.getInt(self, "Durée de la cuisson", "Nombre d'heures :",min=0)[0],
+            QInputDialog.getInt(self, "Durée de la cuisson", "Nombre de minutes :",min=0)[0],
         )
         self.btn6.setText(
             "Cuisson : "
@@ -479,9 +489,10 @@ class fenetre_d_ajout(QWidget):
         self.val_duree1 = self.val_duree1[0] + self.val_duree1[1] / 60
 
     def duree2(self):
+        self.i()
         self.val_duree2 = (
-            QInputDialog.getInt(self, "Durée du repos", "Nombre d'heures :")[0],
-            QInputDialog.getInt(self, "Durée du repos", "Nombre de minutes :")[0],
+            QInputDialog.getInt(self, "Durée du repos", "Nombre d'heures :", min=0)[0],
+            QInputDialog.getInt(self, "Durée du repos", "Nombre de minutes :", min=0)[0],
         )
         self.btn7.setText(
             "Repos : " + str(self.val_duree2[0]) + "h" + str(self.val_duree2[1]) + "min"
@@ -489,18 +500,30 @@ class fenetre_d_ajout(QWidget):
         self.val_duree2 = self.val_duree2[0] + self.val_duree2[1] / 60
 
     def note(self):
+        self.i()
         self.val_note = QInputDialog.getInt(self, "Note", "Note :", min=0, max=10)[0]
         self.btn3.setText(str(self.val_note) + "/10")
 
     def four(self):
-        self.t_four = QInputDialog.getInt(self, "Four", "Température du four :")[0]
+        self.i()
+        self.t_four = QInputDialog.getInt(self, "Four", "Température du four :", min=0)[0]
         self.btn5.setText("Four : " + str(self.t_four) + "°C")
 
     def nb(self):
+        self.i()
         self.val_nb = QInputDialog.getInt(
             self, "Nombre de personnes", "Nombre de personnes :", min=0
         )[0]
         self.btn4.setText(str(self.val_nb) + " personnes")
+
+    def closeEvent(par,x):
+        if not(par.ok):
+            par.ok=QMessageBox.question(par,"Fermeture de recette","Fermer la fenêtre ?")
+            par.ok = par.ok!=65536
+        if par.ok:
+            super().close()
+        else:
+            x.ignore()
 
     def save(self, par):
         try:
@@ -631,6 +654,7 @@ class fenetre_d_ajout(QWidget):
                 os.system(path)
 
             par.close(ok=True)
+            self.ok=True
             self.close()
         except:
             QMessageBox.warning(

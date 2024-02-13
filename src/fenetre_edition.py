@@ -171,13 +171,13 @@ class fenetre_edition(QWidget):
     def duree(self):
         self.val_duree = (
             QInputDialog.getInt(
-                self, "Durée de préparation", "Nombre d'heures :", int(self.val_duree)
+                self, "Durée de préparation", "Nombre d'heures :", int(self.val_duree), min=0
             )[0],
             QInputDialog.getInt(
                 self,
                 "Durée de préparation",
                 "Nombre de minutes :",
-                int((self.val_duree - int(self.val_duree)) * 60),
+                int((self.val_duree - int(self.val_duree)) * 60), min=0
             )[0],
         )
         self.btn2.setText(
@@ -192,13 +192,13 @@ class fenetre_edition(QWidget):
     def duree1(self):
         self.val_duree1 = (
             QInputDialog.getInt(
-                self, "Durée de la cuisson", "Nombre d'heures :", int(self.val_duree1)
+                self, "Durée de la cuisson", "Nombre d'heures :", int(self.val_duree1), min=0
             )[0],
             QInputDialog.getInt(
                 self,
                 "Durée de la cuisson",
                 "Nombre de minutes :",
-                int((self.val_duree1 - int(self.val_duree1)) * 60),
+                int((self.val_duree1 - int(self.val_duree1)) * 60), min=0
             )[0],
         )
         self.btn6.setText(
@@ -213,13 +213,13 @@ class fenetre_edition(QWidget):
     def duree2(self):
         self.val_duree2 = (
             QInputDialog.getInt(
-                self, "Durée du repos", "Nombre d'heures :", int(self.val_duree2)
+                self, "Durée du repos", "Nombre d'heures :", int(self.val_duree2), min=0
             )[0],
             QInputDialog.getInt(
                 self,
                 "Durée du repos",
                 "Nombre de minutes :",
-                int((self.val_duree2 - int(self.val_duree2)) * 60),
+                int((self.val_duree2 - int(self.val_duree2)) * 60), min=0
             )[0],
         )
         self.btn7.setText(

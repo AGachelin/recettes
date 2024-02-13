@@ -1,12 +1,5 @@
-1) enregistrer les recettes (gestion de la base de donnée)
-2) moteur de recherche par clé (tag)
-2bis) séparer la recette par fournisseur - recette déjà faite, à faire...
-3) 'getter' de recettes en ligne
-4) gui
-5) créer la base de données : une table par ingrédient ?
-6) accès aux recettes - interne ou externe ?
-7) 'getter' de recettes à base de photos
-8) range sliders pour quantité
+message de confirmation de fermeture
+déselectionner les lignes du tableau
 
 création de la table : CREATE TABLE recettes(id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL, nom TEXT, path TEXT) STRICT;
 ajout d'un ingrédient : ALTER TABLE recettes ADD COLUMN catt INT DEFAULT(-1);
