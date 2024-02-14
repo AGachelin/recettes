@@ -294,9 +294,9 @@ class fenetre_edition(QWidget):
         self.setGeometry(600, 100, 800, 600)
         self.recette = QPlainTextEdit(liste["data"])
         self.recette.setPlaceholderText("Etapes de la recette")
-        self.ingredients = liste_ingredients(widget_names, self.unites, liste["l_ing"])
-        self.epices = liste_bouttons(self.all_tags, "épices", l=liste["epices"])
-        self.other_tags = liste_bouttons(self.all_tags, "autres tags", l=liste["tags"])
+        self.ingredients = liste_ingredients(widget_names, self.unites, self, liste["l_ing"])
+        self.epices = liste_bouttons(self.all_tags, "épices", self, l=liste["epices"])
+        self.other_tags = liste_bouttons(self.all_tags, "autres tags", self, l=liste["tags"])
         self.lay = QGridLayout()
         self.btn = QPushButton()
         self.btn.setText("Enregistrer")
@@ -365,6 +365,15 @@ class fenetre_edition(QWidget):
         for i in liste["images"]:
             self.addFile(i)
         self.setLayout(self.lay)
+
+    def closeEvent(par,x):
+        if not(par.ok):
+            par.ok=QMessageBox.question(par,"Fermeture de recette","Fermer la fenêtre ?")
+            par.ok = par.ok!=65536
+        if par.ok:
+            super().close()
+        else:
+            x.ignore()
 
     def eventFilter(self, source, event):
         if event.type() == QtCore.QEvent.Drop and event.mimeData().hasUrls():
