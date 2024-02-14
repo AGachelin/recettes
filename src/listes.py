@@ -70,7 +70,7 @@ class ListWidget(QtWidgets.QListWidget):
 
 
 class liste_bouttons(QWidget):
-    def __init__(self, liste, texte, l=[]):
+    def __init__(self, liste, texte, par, l=[]):
         super().__init__()
         self.liste = liste
         layout = QGridLayout(self)
@@ -86,7 +86,7 @@ class liste_bouttons(QWidget):
 
         # create buttons
         add_button = QPushButton("Ajouter")
-        add_button.clicked.connect(self.add)
+        add_button.clicked.connect(lambda : self.add(par))
 
         insert_button = QPushButton("Modifier")
         insert_button.clicked.connect(self.insert)
@@ -102,11 +102,12 @@ class liste_bouttons(QWidget):
         layout.addWidget(remove_button, 2, 1)
         layout.addWidget(clear_button, 3, 1)
         for i in l:
-            self.add(text1=i, ok=True)
+            self.add(par, text1=i, ok=True)
         # show the window
         self.show()
 
-    def add(self, text1="", ok=False):
+    def add(self, par, text1="", ok=False):
+        par.ok=False
         if not (ok):
             text, ok = QInputDialog.getItem(
                 self,
@@ -121,9 +122,9 @@ class liste_bouttons(QWidget):
             self.list_widget.addItem(text)
             self.liste_tag.append(text)
             if text1 == "":
-                self.add()
+                self.add(par)
         elif ok and text:
-            self.add()
+            self.add(par)
 
     def insert(self):
         try:
@@ -165,7 +166,7 @@ class liste_bouttons(QWidget):
 
 
 class liste_ingredients(QWidget):
-    def __init__(self, liste, unites, liste_ing={}):
+    def __init__(self, liste, unites, par, liste_ing={}):
         super().__init__()
         self.liste = liste
         self.unites = unites
@@ -182,7 +183,7 @@ class liste_ingredients(QWidget):
         layout.addWidget(self.list_widget2, 0, 1, 4, 1)
         # create buttons
         add_button = QPushButton("Ajouter")
-        add_button.clicked.connect(self.add)
+        add_button.clicked.connect(lambda : self.add(par))
 
         insert_button = QPushButton("Modifier")
         insert_button.clicked.connect(self.insert)
@@ -205,10 +206,11 @@ class liste_ingredients(QWidget):
                     liste_ing[i][0] = j
             if liste_ing[i][0] == "":
                 liste_ing[i][0] = "Arbitraire"
-            self.add(ing=i, lIng=liste_ing[i], ok1=False)
+            self.add(par, ing=i, lIng=liste_ing[i], ok1=False)
         self.show()
 
-    def add(self, ing="", lIng=[], ok1=True):
+    def add(self, par, ing="", lIng=[], ok1=True):
+        par.ok=False
         if ok1:
             text, ok = QInputDialog.getItem(
                 self,
@@ -371,12 +373,12 @@ class liste_ingredients(QWidget):
                     self.liste_ing[text] = [syst, unite, text1, rho, rapport]
                     self.list_widget1.addItem(text)
                     self.list_widget2.addItem(str(text1) + " " + unite)
-                self.add()
+                self.add(par)
             elif ok and text:
                 QMessageBox.warning(
                     self, "Ajout d'un ingrédient", "L'ingrédient a déjà été ajouté"
                 )
-                self.add()
+                self.add(par)
         else:
             self.list_widget1.addItem(ing)
             unite = lIng[1]
