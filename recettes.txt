@@ -1,4 +1,4 @@
-message de confirmation de fermeture
+détecter changement pour listes
 déselectionner les lignes du tableau
 
 création de la table : CREATE TABLE recettes(id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL, nom TEXT, path TEXT) STRICT;

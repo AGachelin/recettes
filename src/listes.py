@@ -385,6 +385,7 @@ class liste_ingredients(QWidget):
     def insert(self):
         rows = []
         for item in self.list_widget1.selectedItems():
+            item.setSelected(False)
             text, ok = QInputDialog.getText(
                 self,
                 "Modification de l'ingrédient",
@@ -506,6 +507,7 @@ class liste_ingredients(QWidget):
                 QMessageBox.about(self, "error", "l'ingrédient a déjà été ajouté")
                 self.insert()
         for item in self.list_widget2.selectedItems():
+            item.setSelected(False)
             if self.list_widget2.row(item) not in rows:
                 s = ["Masse", "Volume", "Arbitraire"]
                 base = ["g", "mL"]
