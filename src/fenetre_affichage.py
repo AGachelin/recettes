@@ -31,7 +31,6 @@ from listes import liste_bouttons, liste_ingredients, TableWidget
 
 class fenetre_affichage(QMainWindow):
     def __init__(self, id, widget_names, all_tags, unites, par):
-        self.ok=True
         self.liste = {}
         self.id = id
         self.tabConv = {i: par.tabConv[i].copy() for i in par.tabConv}
@@ -281,6 +280,7 @@ class fenetre_affichage(QMainWindow):
 class fenetre_edition(QWidget):
     def __init__(self, widget_names, all_tags, unites, liste, win):
         super().__init__()
+        self.ok=True
         self.liste = liste
         self.widget_names = widget_names
         self.val_duree = liste["val"][3]
