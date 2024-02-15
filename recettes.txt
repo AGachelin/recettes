@@ -8,3 +8,5 @@ qpushbutton.setmenu
 self.label1.setScaledContents(True) for image
 
 curl -i
+
+possibilité d'enlever les photos

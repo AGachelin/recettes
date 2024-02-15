@@ -262,7 +262,7 @@ class fenetre_affichage(QMainWindow):
             "Suppression de recette",
             "La suppression d'une recette est définitive. Poursuivre ?",
         )
-        if ok:
+        if ok != 65536:
             query = QSqlQuery()
             query.exec(f"""delete from recettes where id={self.id}""")
             query.exec(f"""delete from ing_bis where id={self.id}""")
@@ -294,6 +294,7 @@ class fenetre_edition(QWidget):
         self.unites = unites
         self.setGeometry(600, 100, 800, 600)
         self.recette = QPlainTextEdit(liste["data"])
+        self.recette.textChanged.connect(self.i)
         self.recette.setPlaceholderText("Etapes de la recette")
         self.ingredients = liste_ingredients(widget_names, self.unites, self, liste["l_ing"])
         self.epices = liste_bouttons(self.all_tags, "épices", self, l=liste["epices"])
@@ -322,8 +323,10 @@ class fenetre_edition(QWidget):
         self.btn7.setText(liste["Bouttons"][0][2].text())
         self.btn7.clicked.connect(self.duree2)
         self.nom_recette = QLineEdit(liste["nom"])
+        self.nom_recette.textChanged.connect(self.i)
         self.nom_recette.setPlaceholderText("Nom de la recette")
         self.source = QLineEdit()
+        self.source.textChanged.connect(self.i)
         self.source.setPlaceholderText(
             "Source (ne pas spécifier si la source est déjà dans la recette)"
         )
@@ -366,7 +369,8 @@ class fenetre_edition(QWidget):
         for i in liste["images"]:
             self.addFile(i)
         self.setLayout(self.lay)
-
+    def i(self):
+        self.ok=False
     def closeEvent(par,x):
         if not(par.ok):
             par.ok=QMessageBox.question(par,"Fermeture de recette","Fermer la fenêtre ?")
@@ -384,6 +388,7 @@ class fenetre_edition(QWidget):
         return super().eventFilter(source, event)
 
     def addFile(self, filepath):
+        self.ok=False
         l = filepath.split("\\")
         l1 = l[-1].split(".")
         if len(l1) > 2 or l1[-1] not in ["jpg", "png", "jpeg"]:
@@ -438,6 +443,7 @@ class fenetre_edition(QWidget):
         self.close()
 
     def duree(self):
+        self.ok=False
         self.val_duree = (
             QInputDialog.getInt(
                 self, "Durée de préparation", "Nombre d'heures :", int(self.val_duree)
@@ -459,6 +465,7 @@ class fenetre_edition(QWidget):
         self.val_duree = self.val_duree[0] + self.val_duree[1] / 60
 
     def duree1(self):
+        self.ok=False
         self.val_duree1 = (
             QInputDialog.getInt(
                 self, "Durée de la cuisson", "Nombre d'heures :", int(self.val_duree1)
@@ -480,6 +487,7 @@ class fenetre_edition(QWidget):
         self.val_duree1 = self.val_duree1[0] + self.val_duree1[1] / 60
 
     def duree2(self):
+        self.ok=False
         self.val_duree2 = (
             QInputDialog.getInt(
                 self, "Durée du repos", "Nombre d'heures :", int(self.val_duree2)
@@ -497,18 +505,21 @@ class fenetre_edition(QWidget):
         self.val_duree2 = self.val_duree2[0] + self.val_duree2[1] / 60
 
     def note(self):
+        self.ok=False
         self.val_note = QInputDialog.getInt(
             self, "Note", "Note :", int(self.val_note), min=0, max=10
         )[0]
         self.btn3.setText(str(self.val_note) + "/10")
 
     def four(self):
+        self.ok=False
         self.t_four = QInputDialog.getInt(
             self, "Four", "Température du four :", int(self.t_four)
         )[0]
         self.btn5.setText("Four : " + str(self.t_four) + "°C")
 
     def nb(self):
+        self.ok=False
         self.val_nb = QInputDialog.getInt(
             self,
             "Nombre de personnes",
