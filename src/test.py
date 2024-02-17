@@ -323,7 +323,7 @@ class fenetre_d_ajout(QWidget):
         self.recette = QPlainTextEdit()
         self.recette.textChanged.connect(self.i)
         self.recette.setPlaceholderText("Etapes de la recette")
-        self.ingredients = liste_ingredients(widget_names, self.unites, self)
+        self.ingredients = liste_ingredients(widget_names, self.unites, self, {})
         self.epices = liste_bouttons(self.all_tags, "épices", self)
         self.other_tags = liste_bouttons(self.all_tags, "autres tags", self)
         self.lay = QGridLayout()
