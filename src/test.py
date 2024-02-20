@@ -67,8 +67,11 @@ class MainWindow(QMainWindow):
         self.ajout2.triggered.connect(self.modif_ing)
         self.ajout3 = QAction("&Unité")
         self.ajout3.triggered.connect(self.modif_unit)
+        self.ajout4 = QAction("&Tag ou épice")
+        self.ajout4.triggered.connect(self.modif_tag)
         self.menu2.addAction(self.ajout2)
         self.menu2.addAction(self.ajout3)
+        self.menu2.addAction(self.ajout4)
         self.con = QSqlDatabase.addDatabase("QSQLITE")
         self.con.setDatabaseName("../data/recettes.db")
         # Open the connection
@@ -302,6 +305,37 @@ class MainWindow(QMainWindow):
             lay.addWidget(self.btn2, 2, n)
             self.cont.setLayout(lay)
             self.cont.show()
+
+    def modif_tag(self):
+        def save(self):
+            query = QSqlQuery()
+            query.exec(f"""alter table recettes rename column '{text}' to '{nom.text()}'""")
+            self.cont.close()
+            self.close(ok=True)
+        text, ok = QInputDialog.getItem(
+            self,
+            "Modification d'un tag ou d'un épice",
+            "Tag ou épice à modifier :",
+            sorted(self.all_tags),
+            editable=False,
+        )
+        if ok:
+            self.cont = QWidget()
+            lay = QGridLayout()
+            n = 0
+            lay.addWidget(QLabel(text="Nom :"), 0, n)
+            n=n+1
+            nom = QLineEdit(text=text)
+            lay.addWidget(nom, 1, 0, 1, 2)
+            self.btn1 = QPushButton("Enregistrer")
+            self.btn2 = QPushButton("Annuler")
+            self.btn1.clicked.connect(lambda: save(self))
+            self.btn2.clicked.connect(lambda: self.cont.close())
+            lay.addWidget(self.btn1, 2, 0)
+            lay.addWidget(self.btn2, 2, n)
+            self.cont.setLayout(lay)
+            self.cont.show()
+
 
     def close(self, ok=False):
         super().close()
