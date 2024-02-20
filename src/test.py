@@ -623,17 +623,16 @@ class fenetre_d_ajout(QWidget):
                     query.exec(
                         f"""alter table recettes add column '{i}' Text default('')"""
                     )
-                insertion_query = insertion_query + "," + i
+                insertion_query = insertion_query + "," + f"'{i}'"
                 name = name + "," + "'épice'"
             for i in tags:
                 if i not in self.all_tags:
                     query.exec(
                         f"""alter table recettes add column '{i}' Text default('')"""
                     )
-                insertion_query = insertion_query + "," + i
+                insertion_query = insertion_query + "," + f"'{i}'"
                 name = name + "," + "'tag'"
             insertion_query = insertion_query + ") VALUES (" + name + ")"
-            print(insertion_query)
             query.exec(f"""{insertion_query}""")
             query2 = query2[:-1] + query2_bis[:-1] + ")"
             query.exec(f"""{query2}""")

@@ -609,21 +609,22 @@ class fenetre_edition(QWidget):
                             + "="
                             + str(l[2] * win.tabConv["Masse"][l[1]])
                         )
+        print(self.all_tags)
         for i in self.all_tags:
-            query.exec(f"""update recettes set {i}='' where id={id}""")
+            query.exec(f"""update recettes set '{i}'='' where id={id}""")
         for i in epices:
             if i not in self.all_tags:
                 query.exec(
                     f"""alter table recettes add column '{i}' Text default('')"""
                 )
-            insertion_query = insertion_query + "," + i
+            insertion_query = insertion_query + "," + f"'{i}'"
             insertion_query = insertion_query + "=" + "'épice'"
         for i in tags:
             if i not in self.all_tags:
                 query.exec(
                     f"""alter table recettes add column '{i}' Text default('')"""
                 )
-            insertion_query = insertion_query + "," + i
+            insertion_query = insertion_query + "," + f"'{i}'"
             insertion_query = insertion_query + "=" + "'tag'"
         insertion_query = insertion_query + f" where id={self.liste['val'][0]}"
         query.exec(f"""{insertion_query}""")
