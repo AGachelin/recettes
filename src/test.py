@@ -307,11 +307,18 @@ class MainWindow(QMainWindow):
             self.cont.show()
 
     def modif_tag(self):
-        def save(self):
-            query = QSqlQuery()
-            query.exec(f"""alter table recettes rename column '{text}' to '{nom.text()}'""")
-            self.cont.close()
-            self.close(ok=True)
+        def save(self,ok):
+            ok1=1
+            if ok:
+                ok1=QMessageBox.question(self.cont,"Suppression","La suppression est définitive. Poursuivre ?")
+            if ok1!=65536:
+                query = QSqlQuery()
+                if ok:
+                    ok=query.exec(f"""alter table recettes drop column \"{text}\"""")
+                else:
+                    query.exec(f"""alter table recettes rename column '{text}' to '{nom.text()}'""")
+                self.cont.close()
+                self.close(ok=True)
         text, ok = QInputDialog.getItem(
             self,
             "Modification d'un tag ou d'un épice",
@@ -329,10 +336,13 @@ class MainWindow(QMainWindow):
             lay.addWidget(nom, 1, 0, 1, 2)
             self.btn1 = QPushButton("Enregistrer")
             self.btn2 = QPushButton("Annuler")
-            self.btn1.clicked.connect(lambda: save(self))
+            self.btn3 = QPushButton("Supprimer")
+            self.btn1.clicked.connect(lambda: save(self,ok=False))
             self.btn2.clicked.connect(lambda: self.cont.close())
+            self.btn3.clicked.connect(lambda: save(self,ok=True))
             lay.addWidget(self.btn1, 2, 0)
             lay.addWidget(self.btn2, 2, n)
+            lay.addWidget(self.btn3,3,0,1,2)
             self.cont.setLayout(lay)
             self.cont.show()
 
@@ -495,8 +505,8 @@ class fenetre_d_ajout(QWidget):
     def duree(self):
         self.i()
         self.val_duree = (
-            QInputDialog.getInt(self, "Durée de préparation", "Nombre d'heures :",min=0)[0],
-            QInputDialog.getInt(self, "Durée de préparation", "Nombre de minutes :",min=0)[0],
+            QInputDialog().getInt(self, "Préparation", "Nombre d'heures :",min=0)[0],
+            QInputDialog().getInt(self, "Préparation", "Nombre de minutes :",min=0)[0],
         )
         self.btn2.setText(
             "Préparation : "
@@ -510,8 +520,8 @@ class fenetre_d_ajout(QWidget):
     def duree1(self):
         self.i()
         self.val_duree1 = (
-            QInputDialog.getInt(self, "Durée de la cuisson", "Nombre d'heures :",min=0)[0],
-            QInputDialog.getInt(self, "Durée de la cuisson", "Nombre de minutes :",min=0)[0],
+            QInputDialog.getInt(self, "Cuisson", "Nombre d'heures :",min=0)[0],
+            QInputDialog.getInt(self, "Cuisson", "Nombre de minutes :",min=0)[0],
         )
         self.btn6.setText(
             "Cuisson : "
@@ -525,8 +535,8 @@ class fenetre_d_ajout(QWidget):
     def duree2(self):
         self.i()
         self.val_duree2 = (
-            QInputDialog.getInt(self, "Durée du repos", "Nombre d'heures :", min=0)[0],
-            QInputDialog.getInt(self, "Durée du repos", "Nombre de minutes :", min=0)[0],
+            QInputDialog.getInt(self, "Repos", "Nombre d'heures :", min=0)[0],
+            QInputDialog.getInt(self, "Repos", "Nombre de minutes :", min=0)[0],
         )
         self.btn7.setText(
             "Repos : " + str(self.val_duree2[0]) + "h" + str(self.val_duree2[1]) + "min"
@@ -564,7 +574,7 @@ class fenetre_d_ajout(QWidget):
             name = self.nom_recette.text()
             recette = self.recette.toPlainText()
             if self.source.text() != "":
-                recette = recette + "\n" + "Source : " + self.source.text()
+                recette = recette + "\n" + "\n" + "\n" + "Source : " + self.source.text()
             ing = self.ingredients.getIngredients()
             epices = self.epices.getTags()
             tags = self.other_tags.getTags()
@@ -694,7 +704,7 @@ class fenetre_d_ajout(QWidget):
             QMessageBox.warning(
                 self,
                 "Enregistrement d'une recette",
-                "Tous les champs obligatoires n'ont pas été remplis",
+                "Vérifier que tous les champs sont bien remplis. \n Si c'est le cas, une erreur s'est produite à l'enregistrement.",
             )
 
 

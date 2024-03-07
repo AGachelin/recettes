@@ -218,7 +218,10 @@ class fenetre_affichage(QMainWindow):
                         -1,
                         -1,
                     ]
-                    label.setText(str(abs(query.value(n))) + " " + query4.value(0))
+                    x=abs(query.value(n))
+                    if int(x)==x:
+                        x=int(x)
+                    label.setText(str(x) + " " + query4.value(0))
                 self.lay_containerIngredients.addWidget(label)
             n += 1
             i = i + 1
@@ -446,11 +449,11 @@ class fenetre_edition(QWidget):
         self.ok=False
         self.val_duree = (
             QInputDialog.getInt(
-                self, "Durée de préparation", "Nombre d'heures :", int(self.val_duree)
+                self, "Préparation", "Nombre d'heures :", int(self.val_duree)
             )[0],
             QInputDialog.getInt(
                 self,
-                "Durée de préparation",
+                "Préparation",
                 "Nombre de minutes :",
                 int((self.val_duree - int(self.val_duree)) * 60),
             )[0],
@@ -468,11 +471,11 @@ class fenetre_edition(QWidget):
         self.ok=False
         self.val_duree1 = (
             QInputDialog.getInt(
-                self, "Durée de la cuisson", "Nombre d'heures :", int(self.val_duree1)
+                self, "Cuisson", "Nombre d'heures :", int(self.val_duree1)
             )[0],
             QInputDialog.getInt(
                 self,
-                "Durée de la cuisson",
+                "Cuisson",
                 "Nombre de minutes :",
                 int((self.val_duree1 - int(self.val_duree1)) * 60),
             )[0],
@@ -490,11 +493,11 @@ class fenetre_edition(QWidget):
         self.ok=False
         self.val_duree2 = (
             QInputDialog.getInt(
-                self, "Durée du repos", "Nombre d'heures :", int(self.val_duree2)
+                self, "Repos", "Nombre d'heures :", int(self.val_duree2)
             )[0],
             QInputDialog.getInt(
                 self,
-                "Durée du repos",
+                "Repos",
                 "Nombre de minutes :",
                 int((self.val_duree2 - int(self.val_duree2)) * 60),
             )[0],

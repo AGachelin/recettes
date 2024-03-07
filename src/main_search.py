@@ -85,7 +85,6 @@ class main_search(QWidget):
                 request = request + f'"{names[i]}"' + "=0 and "
         checkstates_bis = [i.checked() for i in self.search_menus[1].getWidgets()]
         names = self.search_menus[1].getWidgetNames()
-        print(checkstates_bis)
         for i in range(0, len(checkstates_bis)):
             if checkstates_bis[i] == (0, 0):
                 request = request + f'"{names[i]}" <> \'\' and '
@@ -96,7 +95,6 @@ class main_search(QWidget):
             request = f"SELECT id,nom from recettes where nom like {t}"
         else:
             request = request + " and nom like " + t
-        print(request)
         query.exec(f"""{request}""")
         while query.next():
             btn = QPushButton(self.inner)

@@ -8,5 +8,30 @@ qpushbutton.setmenu
 self.label1.setScaledContents(True) for image
 
 curl -i
-
+cas des apostrophes dans les noms
+clarifier l'annulation pendant l'ajout d'un ingrédient
 possibilité d'enlever les photos
+
+
+mise à jour suppression
+supprimer le ,0 partout
+mettre les quantités à gauche ; après tout ce qui a une unité mettre un de ou d'
+mise en page : vide à droite => mettre les 6 données sur une colonne (espace entre les lignes fixé) à côté de l'image et les ingrédients en deux colonnes (remplies successivement : d'abord la première puis la seconde) ensuite
+rajouter "(mettre 1 si c'est un liquide proche de l'eau)" ou "en général 1" dans la demande de la masse volumique
+mettre la première lettre toujours en majuscule
+mettre des noms plus explicites aux fenêtres lors de l'enregr ingrédient
+sélectionner juste un item dans les deux listes (ingrédients et quantités)
+mettre dans l'ordre alphabétique dans la fenêtre d'affichage et dans la recherche
+ajouter (x) ou (s) au nom des ingrédients
+obliger de rentrer la masse volumique si 
+mettre même nom pour ingrédient et épice
+obliger à rentrer la masse volumique si masse et volume sont sélectionnés
+mettre le l de litre en minuscule
+mettre les minimums partout
+rajouter la possibilité de supprimer ingrédient / épice
+scanner le texte
+bug recherche par tag
+tout sélectionner / tout déselectionner
+possibilité de modifier la largeur du menu de recherche par ingrédient
+impression
+tout mettre en plus gros
