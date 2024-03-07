@@ -6,12 +6,10 @@ from fenetre_affichage import fenetre_affichage
 from PyQt5.QtCore import Qt
 
 
-
-
 class main_search(QWidget):
-    def __init__(self, search_menus, con, widget_names, all_tags, unites, tabConv):
+    def __init__(self, search_menus, con, widget_names, liste_tags, liste_epices, unites, tabConv):
         self.widget_names = widget_names
-        self.all_tags = all_tags
+        self.all_tags = liste_tags+liste_epices
         self.tabConv = tabConv
         self.unites = unites
         super(main_search, self).__init__()
@@ -89,9 +87,9 @@ class main_search(QWidget):
         names = self.search_menus[1].getWidgetNames()
         for i in range(0, len(checkstates_bis)):
             if checkstates_bis[i] == (0, 0):
-                request = request + f'"{names[i]}" <> \'\' and '
+                request = request + f'"{names[i] + " (3p1c3)"}" <> \'\' and '
             elif checkstates_bis[i] == 0:
-                request = request + f'"{names[i]}" = \'\' and '
+                request = request + f'"{names[i] + " (3p1c3)"}" = \'\' and '
         request = request[:-5]
         if len(request) < len("SELECT id,nom from recettes where "):
             request = f"SELECT id,nom from recettes where nom like {t}"

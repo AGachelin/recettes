@@ -81,10 +81,16 @@ class MainWindow(QMainWindow):
         query = QSqlQuery()
         query.exec("""select name from pragma_table_info('recettes')""")
         query.first()
-        self.all_tags = []
+        self.liste_tags = []
+        self.liste_epices = []
         while query.next():
-            self.all_tags.append(query.value(0))
-        self.all_tags = self.all_tags[7:]
+            x=query.value(0)
+            if 't4g2' in x:
+                x=x.split(" (t4g2)")[0]
+                self.liste_tags.append(x)
+            elif '3p1c3' in x:
+                x=x.split(" (3p1c3)")[0]
+                self.liste_epices.append(x)
         query.exec(""" select * from ingredients""")
         self.ingredients = {}
         s = ["Masse", "Volume"]
@@ -113,27 +119,30 @@ class MainWindow(QMainWindow):
                         l[i - 1]
                     )
             n = "Volume"
-        for i in self.ingredients:
-            self.all_tags.pop(self.all_tags.index(i))
         central_widget = QWidget()
         widget_gauche = QWidget()
         self.lay1 = QVBoxLayout(widget_gauche)
         self.col1 = CollapsibleBox("Ingrédients", widget_gauche)
-        self.col2 = CollapsibleBox("Autres tags et épices", widget_gauche)
+        self.col2 = CollapsibleBox("Epices", widget_gauche)
+        self.col3 = CollapsibleBox("Tags", widget_gauche)
         self.l1 = search_menu(
             sorted(list(self.ingredients.keys())), self.unites, self.tabConv
         )
-        self.l2 = search_menu_bis(sorted(self.all_tags))
+        self.l2 = search_menu_bis(sorted(self.liste_epices))
+        self.l3 = search_menu_bis(sorted(self.liste_tags))
         self.col1.setContentLayout(self.l1.layout())
         self.col2.setContentLayout(self.l2.layout())
+        self.col3.setContentLayout(self.l3.layout())
         self.lay1.addWidget(self.col1)
         self.lay1.addWidget(self.col2)
+        self.lay1.addWidget(self.col3)
         self.lay1.addStretch()
         self.main_search = main_search(
-            [self.l1, self.l2],
+            [self.l1, self.l2, self.l3],
             self.con,
             self.ingredients,
-            self.all_tags,
+            self.liste_tags,
+            self.liste_epices,
             self.unites,
             self.tabConv,
         )
@@ -150,7 +159,7 @@ class MainWindow(QMainWindow):
 
     def ajout_manuel(self, w1):
         self.w1 = fenetre_d_ajout(
-            self.ingredients, self.all_tags, self.unites, self.tabConv, self
+            self.ingredients, self.liste_tags, self.liste_epices, self.unites, self.tabConv, self
         )
         self.w1.show()
 
@@ -323,7 +332,7 @@ class MainWindow(QMainWindow):
             self,
             "Modification d'un tag ou d'un épice",
             "Tag ou épice à modifier :",
-            sorted(self.all_tags),
+            sorted(self.liste_tags+self.liste_epices),
             editable=False,
         )
         if ok:
@@ -355,21 +364,22 @@ class MainWindow(QMainWindow):
 
 
 class fenetre_d_ajout(QWidget):
-    def __init__(self, widget_names, all_tags, unites, tabConv, par):
+    def __init__(self, widget_names, liste_tags, liste_epices, unites, tabConv, par):
         super().__init__()
         self.ok=True
         self.widget_names = widget_names
         self.tabConv = tabConv
         self.label = QLabel("Another Window")
-        self.all_tags = all_tags
+        self.liste_epices = liste_epices
+        self.liste_tags = liste_tags
         self.unites = unites
         self.setGeometry(600, 100, 800, 600)
         self.recette = QPlainTextEdit()
         self.recette.textChanged.connect(self.i)
         self.recette.setPlaceholderText("Etapes de la recette")
         self.ingredients = liste_ingredients(widget_names, self.unites, self, {})
-        self.epices = liste_bouttons(self.all_tags, "épices", self)
-        self.other_tags = liste_bouttons(self.all_tags, "autres tags", self)
+        self.epices = liste_bouttons(self.liste_epices, "épices", self)
+        self.other_tags = liste_bouttons(self.liste_tags, "autres tags", self)
         self.lay = QGridLayout()
         self.btn = QPushButton()
         self.btn.setText("Enregistrer")
@@ -663,17 +673,21 @@ class fenetre_d_ajout(QWidget):
                             name = name + "," + str(l[2] * self.tabConv["Masse"][l[1]])
 
             for i in epices:
-                if i not in self.all_tags:
+                if i not in self.liste_epices:
+                    i=i+" (3p1c3)"
                     query.exec(
                         f"""alter table recettes add column '{i}' Text default('')"""
                     )
+                i=i+" (3p1c3)"
                 insertion_query = insertion_query + "," + f"'{i}'"
                 name = name + "," + "'épice'"
             for i in tags:
-                if i not in self.all_tags:
+                if i not in self.liste_tags:
+                    i=i+" (t4g2)"
                     query.exec(
                         f"""alter table recettes add column '{i}' Text default('')"""
                     )
+                i=i+" (t4g2)"
                 insertion_query = insertion_query + "," + f"'{i}'"
                 name = name + "," + "'tag'"
             insertion_query = insertion_query + ") VALUES (" + name + ")"
