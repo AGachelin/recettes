@@ -6,6 +6,8 @@ from fenetre_affichage import fenetre_affichage
 from PyQt5.QtCore import Qt
 
 
+
+
 class main_search(QWidget):
     def __init__(self, search_menus, con, widget_names, all_tags, unites, tabConv):
         self.widget_names = widget_names
